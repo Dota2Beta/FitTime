@@ -2,11 +2,12 @@
 {% block content %}
 <h1>Панель администратора</h1>
 <div class="list">
-{% for item in appointments %}
+{% for row in rows %}
+    {% with item=row.appointment %}
     <article class="card admin-item">
-        <h2>{{ item.client.profile.name }}</h2>
-        <p><b>Телефон:</b> {{ item.client.profile.phone }}</p>
-        <p><b>Email:</b> {{ item.client.email }}</p>
+        <h2>{{ row.client.name }}</h2>
+        <p><b>Телефон:</b> {{ row.client.phone }}</p>
+        <p><b>Email:</b> {{ row.client.email }}</p>
         <p><b>Тренировка:</b> {{ item.workout.title }}</p>
         <p><b>Дата:</b> {{ item.visit_datetime|date:'d.m.Y H:i' }}</p>
         <p><b>Тип:</b> {{ item.get_visit_type_display }}</p>
@@ -23,6 +24,7 @@
             <button class="btn" type="submit">Сохранить</button>
         </form>
     </article>
+    {% endwith %}
 {% empty %}
     <p>Записей нет.</p>
 {% endfor %}

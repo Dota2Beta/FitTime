@@ -14,7 +14,7 @@
         {% if user.is_authenticated %}
             <a href="{% url 'workouts' %}">Тренировки</a>
             <a href="{% url 'cabinet' %}">Кабинет</a>
-            {% if user.username == 'Admin' %}<a href="{% url 'admin_panel' %}">Админ</a>{% endif %}
+            {% if user.username == 'Admin' or user.is_superuser %}<a href="{% url 'admin_panel' %}">Админ</a>{% endif %}
             <a href="{% url 'logout' %}">Выход</a>
         {% else %}
             <a href="{% url 'login' %}">Вход</a>

@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
@@ -10,12 +11,29 @@ from .forms import AppointmentForm, LoginForm, RegisterForm
 from .models import Appointment, Workout
 
 
+def is_fittime_admin(user):
+    return user.is_authenticated and (user.username == 'Admin' or user.is_superuser)
+
+
+def client_info(user):
+    try:
+        profile = user.profile
+    except ObjectDoesNotExist:
+        profile = None
+
+    return {
+        'name': profile.name if profile else (user.get_full_name() or user.username),
+        'phone': profile.phone if profile else 'не указан',
+        'email': user.email or 'не указан',
+    }
+
+
 class AppLoginView(LoginView):
     template_name = 'gym/login.html'
     authentication_form = LoginForm
 
     def get_success_url(self):
-        if self.request.user.username == 'Admin':
+        if is_fittime_admin(self.request.user):
             return reverse_lazy('admin_panel')
         return reverse_lazy('workouts')
 
@@ -75,12 +93,20 @@ def cabinet(request):
 
 @login_required
 def admin_panel(request):
-    if request.user.username != 'Admin':
+    if not is_fittime_admin(request.user):
         messages.error(request, 'Доступ только для администратора.')
         return redirect('workouts')
-    appointments = Appointment.objects.select_related('client', 'client__profile', 'workout')
+
+    appointments = Appointment.objects.select_related('client', 'workout')
+    rows = []
+    for appointment in appointments:
+        rows.append({
+            'appointment': appointment,
+            'client': client_info(appointment.client),
+        })
+
     return render(request, 'gym/admin_panel.html', {
-        'appointments': appointments,
+        'rows': rows,
         'statuses': Appointment.Status.choices,
     })
 
@@ -88,7 +114,7 @@ def admin_panel(request):
 @require_POST
 @login_required
 def change_status(request, appointment_id):
-    if request.user.username != 'Admin':
+    if not is_fittime_admin(request.user):
         messages.error(request, 'Недостаточно прав.')
         return redirect('workouts')
     appointment = get_object_or_404(Appointment, id=appointment_id)
