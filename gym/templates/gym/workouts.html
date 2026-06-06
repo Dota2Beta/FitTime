@@ -1,0 +1,20 @@
+{% extends 'gym/base.html' %}
+{% block content %}
+<h1>Выбор тренировок</h1>
+<div class="grid">
+    {% for workout in workouts %}
+    <article class="card workout">
+        <h2>{{ workout.title }}</h2>
+        <p>{{ workout.description }}</p>
+        <p><b>Стоимость:</b> {{ workout.price }} ₽</p>
+        <p><b>Длительность:</b> {{ workout.duration_minutes }} мин.</p>
+        <p class="status {% if workout.is_available %}ok{% else %}bad{% endif %}">
+            {% if workout.is_available %}Доступна{% else %}Недоступна{% endif %}
+        </p>
+        {% if workout.is_available %}<a class="btn" href="{% url 'appointment_for_workout' workout.id %}">Записаться</a>{% endif %}
+    </article>
+    {% empty %}
+    <p>Пока тренировок нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}
