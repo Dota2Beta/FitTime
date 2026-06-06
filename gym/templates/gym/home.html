@@ -1,0 +1,23 @@
+{% extends 'gym/base.html' %}
+{% block content %}
+<section class="hero">
+    <div class="slider" data-slider>
+        <article class="slide active">
+            <h1>Фитнес-клуб FitTime</h1>
+            <p>Онлайн-запись на тренировки без звонков и очередей.</p>
+        </article>
+        <article class="slide">
+            <h1>Сильнее каждый день</h1>
+            <p>Силовые, йога, растяжка и кардио для разных целей.</p>
+        </article>
+        <article class="slide">
+            <h1>Акция для новичков</h1>
+            <p>Первое посещение можно оформить прямо на сайте.</p>
+        </article>
+    </div>
+    <div class="actions">
+        <a class="btn" href="{% url 'register' %}">Зарегистрироваться</a>
+        <a class="btn secondary" href="{% url 'login' %}">Войти</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'gym/base.html' %}
+{% block content %}
+<h1>Панель администратора</h1>
+<div class="list">
+{% for row in rows %}
+    {% with item=row.appointment %}
+    <article class="card admin-item">
+        <h2>{{ row.client.name }}</h2>
+        <p><b>Телефон:</b> {{ row.client.phone }}</p>
+        <p><b>Email:</b> {{ row.client.email }}</p>
+        <p><b>Тренировка:</b> {{ item.workout.title }}</p>
+        <p><b>Дата:</b> {{ item.visit_datetime|date:'d.m.Y H:i' }}</p>
+        <p><b>Тип:</b> {{ item.get_visit_type_display }}</p>
+        <p><b>Комментарий:</b> {{ item.comment|default:'-' }}</p>
+        <form method="post" action="{% url 'change_status' item.id %}">
+            {% csrf_token %}
+            <label>Статус
+                <select name="status">
+                    {% for value, title in statuses %}
+                    <option value="{{ value }}" {% if item.status == value %}selected{% endif %}>{{ title }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button class="btn" type="submit">Сохранить</button>
+        </form>
+    </article>
+    {% endwith %}
+{% empty %}
+    <p>Записей нет.</p>
+{% endfor %}
+</div>
+{% endblock %}

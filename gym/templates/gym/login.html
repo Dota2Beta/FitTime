@@ -1,0 +1,12 @@
+{% extends 'gym/base.html' %}
+{% block content %}
+<section class="card form-card">
+    <h1>Авторизация</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% include 'gym/form_errors.html' %}
+        <button class="btn" type="submit">Войти</button>
+    </form>
+    <p>Нет аккаунта? <a href="{% url 'register' %}">Регистрация</a></p>
+</section>
+{% endblock %}

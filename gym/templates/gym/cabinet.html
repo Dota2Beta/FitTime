@@ -1,0 +1,17 @@
+{% extends 'gym/base.html' %}
+{% block content %}
+<h1>Личный кабинет</h1>
+<div class="list">
+{% for item in appointments %}
+    <article class="card">
+        <h2>{{ item.workout.title }}</h2>
+        <p><b>Дата:</b> {{ item.visit_datetime|date:'d.m.Y H:i' }}</p>
+        <p><b>Тип:</b> {{ item.get_visit_type_display }}</p>
+        <p><b>Комментарий:</b> {{ item.comment|default:'-' }}</p>
+        <p><b>Статус:</b> {{ item.get_status_display }}</p>
+    </article>
+{% empty %}
+    <p>У вас еще нет записей.</p>
+{% endfor %}
+</div>
+{% endblock %}
